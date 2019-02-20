@@ -1,5 +1,9 @@
 package com.revature.eval.java.core;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -647,9 +651,29 @@ public class EvaluationService {
 	 * @param given
 	 * @return
 	 */
+	
 	public Temporal getGigasecondDate(Temporal given) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		int hour, minute, second;
+		
+		try{
+			hour = given.get(ChronoField.HOUR_OF_DAY);
+			minute = given.get(ChronoField.MINUTE_OF_HOUR);
+			second = given.get(ChronoField.SECOND_OF_MINUTE);
+		} catch(Exception e) {
+			hour = 0;
+			minute = 0;
+			second = 0;
+		}
+		
+		Temporal temp = LocalDateTime.of(given.get(ChronoField.YEAR), given.get(ChronoField.MONTH_OF_YEAR), given.get(ChronoField.DAY_OF_MONTH), hour, minute, second);
+		try {
+			temp = temp.plus((long) 1000000000, ChronoUnit.SECONDS);
+		} catch(Exception e) {
+			
+		}
+		
+		System.out.println(temp);
+		return temp;
 	}
 
 	/**

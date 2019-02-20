@@ -1,13 +1,14 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class EvaluationService {
 
@@ -217,15 +218,15 @@ public class EvaluationService {
 	 */
 	public Map<String, Integer> wordCount(String string) {
 		HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
-    String[] arr = string.split("[^\\w']+");
-    for(int i = 0; i < arr.length; i++){
-      if(wordMap.get(arr[i]) == null){
-        wordMap.put(arr[i], 1);
-      } else{
-        wordMap.put(arr[i], wordMap.get(arr[i])+1);
-      }
-    }
-
+	    String[] arr = string.split("[^\\w']+");
+	    for(int i = 0; i < arr.length; i++){
+	    	if(wordMap.get(arr[i]) == null){
+	    		wordMap.put(arr[i], 1);
+		    } else{
+		      wordMap.put(arr[i], wordMap.get(arr[i])+1);
+		    }
+	    }
+	
 		return wordMap;
 	}
 
@@ -265,22 +266,22 @@ public class EvaluationService {
 	 *
 	 */
 
-	 // Implement Comparable and override compareTo method to compare generic type t?
- static class BinarySearch<T> {
+	// Implement Comparable and override compareTo method to compare generic type t?
+	static class BinarySearch<T> {
 		private List<T> sortedList;
 
 		public int indexOf(T t) {
 			// int low = 0;
-      // int high = sortedList.size() - 1;
-      // while (low <= high) {
-      //   int mid = (low + high) / 2;
-      //   if(t.equals(sortedList.get(mid))) return mid;
-      //   else if(t.compareTo(sortedList.get(mid)) < 0) high = mid - 1;
-      //   else low = mid + 1;
-      // }
-      // return -1;
+			// int high = sortedList.size() - 1;
+			// while (low <= high) {
+			//   int mid = (low + high) / 2;
+			//   if(t.equals(sortedList.get(mid))) return mid;
+			//   else if(t.compareTo(sortedList.get(mid)) < 0) high = mid - 1;
+			//   else low = mid + 1;
+			// }
+			// return -1;
 
-      return sortedList.indexOf(t);
+			return sortedList.indexOf(t);
 		}
 
 		public BinarySearch(List<T> sortedList) {
@@ -347,15 +348,15 @@ public class EvaluationService {
 	 */
 	public boolean isArmstrongNumber(int input) {
 		String number = String.valueOf(input);
-    int ex = number.length();
-    int result = 0;
-
-    for(int i = 0; i < number.length(); i++){
-      result += Math.pow(Integer.valueOf(String.valueOf(number.charAt(i))), ex);
-    }
-
-    if(result == input) return true;
-    else return false;
+	    int ex = number.length();
+	    int result = 0;
+	
+	    for(int i = 0; i < number.length(); i++){
+	    	result += Math.pow(Integer.valueOf(String.valueOf(number.charAt(i))), ex);
+	    }
+	
+	    if(result == input) return true;
+	    else return false;
 	}
 
 	/**
@@ -621,22 +622,21 @@ public class EvaluationService {
 	 */
 	public boolean isPangram(String string) {
 		HashMap<String, Integer> letterMap = new HashMap<String, Integer>(){{
-      put("a", 0); put("e", 0); put("i", 0); put("m", 0); put("q", 0);
-      put("b", 0); put("f", 0); put("j", 0); put("n", 0); put("r", 0);
-      put("c", 0); put("g", 0); put("k", 0); put("o", 0); put("s", 0);
-      put("d", 0); put("h", 0); put("l", 0); put("p", 0); put("t", 0);
-      put("u", 0); put("v", 0); put("w", 0); put("x", 0); put("y", 0);
-      put("z", 0);
-    }};
+			put("a", 0); put("e", 0); put("i", 0); put("m", 0); put("q", 0); put("b", 0); put("f", 0); put("j", 0); put("n", 0); put("r", 0);
+			put("c", 0); put("g", 0); put("k", 0); put("o", 0); put("s", 0);
+			put("d", 0); put("h", 0); put("l", 0); put("p", 0); put("t", 0);
+			put("u", 0); put("v", 0); put("w", 0); put("x", 0); put("y", 0);
+			put("z", 0);
+		}};
 
-    String str = string.replaceAll("[^a-zA-Z]", "").toLowerCase();
-
-    for(int i = 0; i < str.length(); i++){
-      letterMap.put(String.valueOf(str.charAt(i)), letterMap.get(String.valueOf(str.charAt(i)))+1);
-    }
-
-    if(letterMap.values().contains(0)) return false;
-    else return true;
+	    String str = string.replaceAll("[^a-zA-Z]", "").toLowerCase();
+	
+	    for(int i = 0; i < str.length(); i++){
+	      letterMap.put(String.valueOf(str.charAt(i)), letterMap.get(String.valueOf(str.charAt(i)))+1);
+	    }
+	
+	    if(letterMap.values().contains(0)) return false;
+	    else return true;
 	}
 
 	/**
@@ -666,10 +666,25 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
-		Set<Integer> numbers = new HashSet<Integer>();
+		Set<Integer> numbers = new TreeSet<Integer>();
 		int result = 0;
-
-
+		
+		for(int x = 0; x < set.length; x++) {
+			int largestNum = 0;
+			int multiplier = 1;
+			
+			while(largestNum < i) {
+				largestNum = multiplier * set[x];
+				if(largestNum < i) {
+					numbers.add(largestNum);
+				}
+				multiplier++;
+			}
+		}
+		Iterator<Integer> iter = numbers.iterator();
+		while(iter.hasNext()) {
+			result += iter.next();
+		}
 
 		return result;
 	}
@@ -773,27 +788,27 @@ public class EvaluationService {
 	 */
 	public int solveWordProblem(String string) {
 		String str = string.substring(8, string.length()-1);
-    String[] arr = str.split(" ");
-    int result = 0;
-
-    try{
-      switch(arr[1]){
-        case "plus":
-          result = Integer.valueOf(arr[0]) + Integer.valueOf(arr[2]);
-          break;
-        case "minus":
-          result = Integer.valueOf(arr[0]) - Integer.valueOf(arr[2]);
-          break;
-        case "multiplied":
-          result = Integer.valueOf(arr[0]) * Integer.valueOf(arr[3]);
-          break;
-        case "divided":
-          result = Integer.valueOf(arr[0]) / Integer.valueOf(arr[3]);
-          break;
-      }
-    } catch(Exception e){
-      System.out.println("lol yo input ain't what we lookin for my homie");
-    }
+	    String[] arr = str.split(" ");
+	    int result = 0;
+	
+	    try{
+	      switch(arr[1]){
+	        case "plus":
+	          result = Integer.valueOf(arr[0]) + Integer.valueOf(arr[2]);
+	          break;
+	        case "minus":
+	          result = Integer.valueOf(arr[0]) - Integer.valueOf(arr[2]);
+	          break;
+	        case "multiplied":
+	          result = Integer.valueOf(arr[0]) * Integer.valueOf(arr[3]);
+	          break;
+	        case "divided":
+	          result = Integer.valueOf(arr[0]) / Integer.valueOf(arr[3]);
+	          break;
+	      }
+	    } catch(Exception e){
+	      System.out.println("lol yo input ain't what we lookin for my homie");
+	    }
 		return result;
 	}
 

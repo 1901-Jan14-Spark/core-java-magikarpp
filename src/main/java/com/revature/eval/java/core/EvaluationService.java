@@ -35,7 +35,7 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		String[] split = phrase.split(" ");
+		String[] split = phrase.split("[^\\w']+");
 		String result = "";
 	    for(int i = 0; i < split.length; i++){
 	      result += String.valueOf(split[i].charAt(0)).toUpperCase();
@@ -105,7 +105,7 @@ public class EvaluationService {
 			if(sideOne == sideThree) count += 1;
 			if(sideTwo == sideThree) count += 1;
 			
-			if(count >= 2) return true;
+			if(count >= 1) return true;
 			return false;
 		}
 
@@ -317,12 +317,17 @@ public class EvaluationService {
 	 */
 	public String toPigLatin(String string) {
 		String[] vowels = {"a", "e", "i", "o", "u"};
-    String ay = "ay";
-
-    if(Arrays.asList(vowels).contains(String.valueOf(string.charAt(0)).toLowerCase())) string = string.concat(ay);
-    else string = string.substring(1).concat(String.valueOf(string.charAt(0)).concat(ay));
-
-		return string;
+		String[] arr = string.split(" ");
+		String ay = "ay";
+		
+		for(int i = 0; i < arr.length; i++){
+			if(Arrays.asList(vowels).contains(String.valueOf(arr[i].charAt(0)).toLowerCase())) arr[i] = arr[i].concat(ay);
+			else if(Integer.valueOf(arr[i].charAt(0)) == 113 || Integer.valueOf(arr[i].charAt(0)) == 116) arr[i] = arr[i].substring(2).concat(String.valueOf(arr[i].charAt(0)).concat(String.valueOf(arr[i].charAt(1))).concat(ay));
+			else if(Integer.valueOf(arr[i].charAt(0)) == 115 && Integer.valueOf(arr[i].charAt(1)) == 99 && Integer.valueOf(arr[i].charAt(2)) == 104) arr[i] = arr[i].substring(3).concat(String.valueOf(arr[i].charAt(0)).concat(String.valueOf(arr[i].charAt(1))).concat(String.valueOf(arr[i].charAt(2))).concat(ay));
+			else arr[i] = arr[i].substring(1).concat(String.valueOf(arr[i].charAt(0)).concat(ay));
+		}
+		
+		return String.join(" ", arr);
 	}
 
 	/**
@@ -363,14 +368,16 @@ public class EvaluationService {
 	 * @param l
 	 * @return
 	 */
-	public List<Integer> calculatePrimeFactorsOf(long l) {
-		List<Integer> result = new ArrayList<Integer>();
-    for (int i = 2; i <= l; i++) {
-      while (l % i == 0) {
-        result.add(i);
-        l /= i;
-      }
-    }
+	
+	public List<Long> calculatePrimeFactorsOf(long l) {
+		List<Long> result = new ArrayList<Long>();
+		for (long i = 2; i <= l; i++) {
+			while (l % i == 0) {
+				result.add(i);
+				l /= i;
+			}
+		}
+		
 		return result;
 	}
 
@@ -410,26 +417,25 @@ public class EvaluationService {
 
 		public String rotate(String string) {
 			String[] plain = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
-      String str = "abcdefghijklmnopqrstuvwxyz";
-      String result = "";
+			String str = "abcdefghijklmnopqrstuvwxyz";
+			String result = "";
 
-      for(int i = 0; i < string.length(); i++){
-        // Int value of 32 = " "; Int value of 46 = "."
-        if(Integer.valueOf(string.charAt(i)) == 32){
-          result += " ";
-        }else if(Integer.valueOf(string.charAt(i)) == 46){
-          result += ".";
-        }else {
-          boolean isUpper = !String.valueOf(string.charAt(i)).equals(String.valueOf(string.charAt(i)).toLowerCase());
-          int place = str.indexOf(String.valueOf(string.charAt(i)).toLowerCase()) + key;
-          if(place >= 26) place = place - 26;
-          if(isUpper) result += plain[place].toUpperCase();
-          else result += plain[place];
-        }
-      }
+			for(int i = 0; i < string.length(); i++){
+				// matches anything thats not a non-alphabetic character
+				if(String.valueOf(string.charAt(i)).matches("\\P{Alpha}+")){
+					result += String.valueOf(string.charAt(i));
+				} else {
+					boolean isUpper = !String.valueOf(string.charAt(i)).equals(String.valueOf(string.charAt(i)).toLowerCase());
+					int place = str.indexOf(String.valueOf(string.charAt(i)).toLowerCase()) + key;
+					  
+					if(place >= 26) place = place - 26;
+					if(isUpper) result += plain[place].toUpperCase();
+					else result += plain[place];
+				}
+			}
 
-			return result;
-		}
+		return result;
+	}
 
 	}
 
@@ -446,23 +452,26 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int calculateNthPrime(int i) {
+		if(i == 0) {
+			throw new IllegalArgumentException("Yo prime can't be 0"); 
+		}
 		int check;
-    int count;
-    for(check = 2, count = 0; count < i; check++){
-        if (isPrime(check)) {
-            count++;
-        }
-    }
-    return check-1;
+	    int count;
+	    for(check = 2, count = 0; count < i; check++){
+	        if (isPrime(check)) {
+	            count++;
+	        }
+	    }
+	    return check-1;
 	}
 
-  private static boolean isPrime(int n) {
-    for(int i = 2; i < n/2; i++){
-        if (n % i == 0) {
-            return false;
-        }
-    }
-    return true;
+	private static boolean isPrime(int n) {
+	    for(int i = 2; i < n; i++){
+	        if (n % i == 0) {
+	            return false;
+	        }
+	    }
+	    return true;
 	}
 
 	/**
@@ -492,9 +501,9 @@ public class EvaluationService {
 	static class AtbashCipher {
 
 		static private String[] plain = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
-    static private String plainStr = "abcdefghijklmnopqrstuvwxyz";
-    static private String[] cipher = {"z", "y", "x", "w", "v", "u", "t", "s", "r", "q", "p", "o", "n", "m", "l", "k", "j", "i", "h", "g", "f", "e", "d", "c", "b", "a"};
-    static private String cipherStr = "zyxwvutsrqponmlkjihgfedcba";
+	    static private String plainStr = "abcdefghijklmnopqrstuvwxyz";
+	    static private String[] cipher = {"z", "y", "x", "w", "v", "u", "t", "s", "r", "q", "p", "o", "n", "m", "l", "k", "j", "i", "h", "g", "f", "e", "d", "c", "b", "a"};
+	    static private String cipherStr = "zyxwvutsrqponmlkjihgfedcba";
 
 		/**
 		 * Question 13
@@ -503,12 +512,25 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String encode(String string) {
+			int count = 0;
 			String result = "";
-      String str = string.replaceAll("\\s+","");
-      for(int i = 0; i < str.length(); i++){
-        result += cipher[plainStr.indexOf(String.valueOf(str.charAt(i)).toLowerCase())];
-      }
-
+			String str = string.replaceAll("\\W","");
+			for(int i = 0; i < str.length(); i++){
+				if(String.valueOf(str.charAt(i)).matches("\\d")) {
+					result += String.valueOf(str.charAt(i));
+				} else {
+					result += cipher[plainStr.indexOf(String.valueOf(str.charAt(i)).toLowerCase())];
+				}
+				count++;
+				if(count%5 == 0) {
+					result += " ";
+				}
+			}
+			
+			if(Integer.valueOf(result.charAt(result.length()-1)) == 32) {
+				result = result.substring(0, result.length()-1);
+			}
+			
 			return result;
 		}
 
@@ -522,8 +544,13 @@ public class EvaluationService {
 			String result = "";
 			String str = string.replaceAll("\\s+","");
 			for(int i = 0; i < str.length(); i++){
-				result += plain[cipherStr.indexOf(String.valueOf(str.charAt(i)).toLowerCase())];
+				if(String.valueOf(str.charAt(i)).matches("\\P{Alpha}+")) {
+					result += String.valueOf(str.charAt(i));
+				} else {
+					result += plain[cipherStr.indexOf(String.valueOf(str.charAt(i)).toLowerCase())];
+				}
 			}
+			
 
 			return result;
 		}
@@ -553,22 +580,30 @@ public class EvaluationService {
 	 */
 	public boolean isValidIsbn(String string) {
 		String str = string.replaceAll("\\-+", "");
-    int count = 10;
-    int result = 0;
-    if(str.length() != 10){
-      return false;
-    }
-    try{
-      for(int i = 0; i < str.length(); i++){
-        result += Integer.valueOf(String.valueOf(str.charAt(i))) * count;
-        count--;
-      }
-    } catch(Exception e){
-      return false;
-    }
-
-    if(result%11 == 0) return true;
-    else return false;
+	    int count = 10;
+	    int result = 0;
+	    if(str.length() != 10){
+	    	return false;
+	    }
+	    
+	    for(int i = 0; i < str.length(); i++) {
+	    	if(String.valueOf(str.charAt(i)).matches("[A-Z&&[^X]]+")) {
+	    		return false;
+	    	}
+	    }
+	    
+	    try{
+	    	for(int i = 0; i < str.length(); i++){
+	    		if(Integer.valueOf(str.charAt(i)) == 88) result += 10 * count;
+	    		else result += Integer.valueOf(String.valueOf(str.charAt(i))) * count;
+		        count--;
+	    	}
+	    } catch(Exception e){
+	    	return false;
+	    }
+	
+	    if(result%11 == 0) return true;
+	    else return false;
 	}
 
 	/**
@@ -632,7 +667,7 @@ public class EvaluationService {
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
 		Set<Integer> numbers = new HashSet<Integer>();
-    int result = 0;
+		int result = 0;
 
 
 
@@ -677,40 +712,36 @@ public class EvaluationService {
 	 */
 	public boolean isLuhnValid(String string) {
 		String[] arr = string.split(" ");
-    String str = "";
-    for(int i = 0; i < arr.length; i++){
-      if(arr[i].length() <= 1) arr[i] = "";
-      str += arr[i];
-    }
+	    String str = "";
+	    for(int i = 0; i < arr.length; i++){
+	    	if(arr[i].length() <= 1) arr[i] = "";
+	    	str += arr[i];
+	    }
+	    
+	    for(int i = 0; i < str.length(); i++) {
+	    	if(String.valueOf(str.charAt(i)).matches("\\D")) {
+	    		return false;
+	    	}
+	    }
 
-    boolean even;
-    int result = 0;
+	    boolean even;
+	    int result = 0;
 
-    if(str.length()%2 == 0) even = true;
-    else even = false;
-
-    // Holy moly thats some ugly code I wrote. Maybe I'll come back to clean it up..
-    for(int i = 0; i < str.length(); i++){
-      if(even){
-        if(i%2 == 0){
-          if(Integer.valueOf(String.valueOf(str.charAt(i))) * 2 > 9){
-            result += Integer.valueOf(String.valueOf(str.charAt(i))) * 2 - 9;
-          } else result += Integer.valueOf(String.valueOf(str.charAt(i))) * 2;
-        } else{
-          result += Integer.valueOf(String.valueOf(str.charAt(i)));
-        }
-      } else{
-        if(i%2 != 0){
-          if(Integer.valueOf(String.valueOf(str.charAt(i))) * 2 > 9){
-            result += Integer.valueOf(String.valueOf(str.charAt(i))) * 2 - 9;
-          } else result += Integer.valueOf(String.valueOf(str.charAt(i))) * 2;
-        }
-        else result += Integer.valueOf(String.valueOf(str.charAt(i)));
-      }
-    }
-
-    if(result%10 == 0) return true;
-    else return false;
+	    if(str.length()%2 == 0) even = true;
+	    else even = false;
+	
+	    for(int i = 0; i < str.length(); i++){
+			if((i%2 == 0 && even) || (i%2 != 0 && !even)){
+				if(Integer.valueOf(String.valueOf(str.charAt(i))) * 2 > 9){
+					result += Integer.valueOf(String.valueOf(str.charAt(i))) * 2 - 9;
+				} else result += Integer.valueOf(String.valueOf(str.charAt(i))) * 2;
+			} else {
+				result += Integer.valueOf(String.valueOf(str.charAt(i)));
+			}
+	    }
+	
+	    if(result%10 == 0) return true;
+	    else return false;
 	}
 
 	/**

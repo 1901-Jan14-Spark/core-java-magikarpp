@@ -271,21 +271,21 @@ public class EvaluationService {
 	 */
 
 	// Implement Comparable and override compareTo method to compare generic type t?
-	static class BinarySearch<T> {
+	static class BinarySearch<T extends Comparable> {
 		private List<T> sortedList;
 
 		public int indexOf(T t) {
-			// int low = 0;
-			// int high = sortedList.size() - 1;
-			// while (low <= high) {
-			//   int mid = (low + high) / 2;
-			//   if(t.equals(sortedList.get(mid))) return mid;
-			//   else if(t.compareTo(sortedList.get(mid)) < 0) high = mid - 1;
-			//   else low = mid + 1;
-			// }
-			// return -1;
+			int low = 0;
+			int high = sortedList.size() - 1;
+			while (low <= high) {
+			  int mid = (low + high) / 2;
+			  if(t.equals(sortedList.get(mid))) return mid;
+			  else if(t.compareTo(sortedList.get(mid)) < 0) high = mid - 1;
+			  else low = mid + 1;
+			}
+			return -1;
 
-			return sortedList.indexOf(t);
+//			return sortedList.indexOf(t);
 		}
 
 		public BinarySearch(List<T> sortedList) {
@@ -672,7 +672,6 @@ public class EvaluationService {
 			
 		}
 		
-		System.out.println(temp);
 		return temp;
 	}
 
